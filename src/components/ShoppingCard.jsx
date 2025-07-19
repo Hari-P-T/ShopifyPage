@@ -9,12 +9,13 @@ export default function ProductSubscriptionCard() {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [flavor1, setFlavor1] = useState(null);
   const [flavor2, setFlavor2] = useState(null);
+  const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const url=import.meta.env.VITE_SUBSCRIPTION_URL;
-        const res = await axios.get(url);//'http://localhost:5000/api/product-subscription'
+        const url = import.meta.env.VITE_SUBSCRIPTION_URL;
+        const res = await axios.get(url);
         setProductData(res.data);
         setSelectedPlan(res.data.plans[0]?.id || null);
         setFlavor1(res.data.flavors[0]?.id || null);
@@ -119,19 +120,37 @@ export default function ProductSubscriptionCard() {
             </div>
 
             <ul style={styles.featureList}>
-              <li>✔ Lorem Ipsum Dolor Sit Amet, Consectetur Adipiscing Elit.</li>
+              <li>Lorem Ipsum Dolor Sit Amet, Consectetur Adipiscing Elit.</li>
               <li style={styles.boldFeature}>
-                ✔ Lorem Ipsum Dolor Sit Amet, Consectetur Adipiscing Elit.
+                Lorem Ipsum Dolor Sit Amet, Consectetur Adipiscing Elit.
               </li>
-              <li>✔ Lorem Ipsum Dolor Sit Amet, Consectetur Adipiscing Elit.</li>
-              <li>✔ Lorem Ipsum Dolor Sit Amet, Consectetur Adipiscing Elit.</li>
-              <li>✔ Lorem Ipsum Dolor Sit Amet, Consectetur Adipiscing Elit.</li>
+              <li>Lorem Ipsum Dolor Sit Amet, Consectetur Adipiscing Elit.</li>
+              <li>Lorem Ipsum Dolor Sit Amet, Consectetur Adipiscing Elit.</li>
+              <li>Lorem Ipsum Dolor Sit Amet, Consectetur Adipiscing Elit.</li>
             </ul>
           </div>
         </div>
       </div>
 
-      <button style={styles.button}>Add to Cart</button>
+      <button style={styles.button} onClick={() => setShowPopup(true)}>
+        Add to Cart
+      </button>
+
+      {showPopup && (
+        <div style={styles.popupOverlay}>
+          <div style={styles.popup}>
+            <h3>Added to Cart</h3>
+            <p><strong>Plan:</strong> {plans.find(p => p.id === selectedPlan)?.label}</p>
+            <p><strong>Flavor 1:</strong> {flavors.find(f => f.id === flavor1)?.label}</p>
+            {selectedPlan === 'double' && (
+              <p><strong>Flavor 2:</strong> {flavors.find(f => f.id === flavor2)?.label}</p>
+            )}
+            <button onClick={() => setShowPopup(false)} style={styles.closeButton}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -293,5 +312,34 @@ const styles = {
     border: 'none',
     cursor: 'pointer',
     borderRadius: '20px',
+  },
+  popupOverlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100vw',
+    height: '100vh',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000,
+  },
+  popup: {
+    backgroundColor: 'white',
+    padding: 25,
+    borderRadius: 8,
+    maxWidth: 300,
+    textAlign: 'center',
+    boxShadow: '0 2px 10px rgba(0,0,0,0.3)',
+  },
+  closeButton: {
+    marginTop: 20,
+    padding: '10px 20px',
+    backgroundColor: '#b99168',
+    color: 'white',
+    border: 'none',
+    borderRadius: 5,
+    cursor: 'pointer',
   },
 };
